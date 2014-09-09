@@ -21,15 +21,10 @@ barraud@math.univ-lille1.fr
 This code defines several functions to make handling of transform
 attribute easier.
 '''
-#import inkex
-#import cubicsuperpath
-#import bezmisc
-#import simplestyle
-#import copy
-import math
-import re
+#import inkex, cubicsuperpath, bezmisc, simplestyle
+import copy, math, re
 
-identity=[[1.0,0.0,0.0],[0.0,1.0,0.0]]
+identity =[[1.0,0.0,0.0],[0.0,1.0,0.0]]
 
 def parseTransform(transf,mat=[[1.0,0.0,0.0],[0.0,1.0,0.0]]):
     if transf=="" or transf==None:
@@ -111,19 +106,19 @@ def applyTransformToPath(mat,path):
             for pt in ctl:
                 applyTransformToPoint(mat,pt)
 
-# def fuseTransform(node):
-#     if node.get('d')==None:
-#         #FIX ME: how do you raise errors?
-#         raise AssertionError, 'can not fuse "transform" of elements that have no "d" attribute'
-#     t = node.get("transform")
-#     if t == None:
-#         return
-#     m = parseTransform(t)
-#     d = node.get('d')
-#     p = cubicsuperpath.parsePath(d)
-#     applyTransformToPath(m,p)
-#     node.set('d', cubicsuperpath.formatPath(p))
-#     del node.attrib["transform"]
+def fuseTransform(node):
+    if node.get('d')==None:
+        #FIX ME: how do you raise errors?
+        raise AssertionError, 'can not fuse "transform" of elements that have no "d" attribute'
+    t = node.get("transform")
+    if t == None:
+        return
+    m = parseTransform(t)
+    d = node.get('d')
+    p = cubicsuperpath.parsePath(d)
+    applyTransformToPath(m,p)
+    node.set('d', cubicsuperpath.formatPath(p))
+    del node.attrib["transform"]
 
 ####################################################################
 ##-- Some functions to compute a rough bbox of a given list of objects.
@@ -148,25 +143,25 @@ def roughBBox(path):
                yMax=max(yMax,pt[1])
     return xmin,xMax,ymin,yMax
 
-# def computeBBox(aList,mat=[[1,0,0],[0,1,0]]):
-#     bbox=None
-#     for node in aList:
-#         m = parseTransform(node.get('transform'))
-#         m = composeTransform(mat,m)
-#         #TODO: text not supported!
-#         if node.get("d"):
-#             d = node.get('d')
-#             p = cubicsuperpath.parsePath(d)
-#             applyTransformToPath(m,p)
-#             bbox=boxunion(roughBBox(p),bbox)
+def computeBBox(aList,mat=[[1,0,0],[0,1,0]]):
+    bbox=None
+    for node in aList:
+        m = parseTransform(node.get('transform'))
+        m = composeTransform(mat,m)
+        #TODO: text not supported!
+        if node.get("d"):
+            d = node.get('d')
+            p = cubicsuperpath.parsePath(d)
+            applyTransformToPath(m,p)
+            bbox=boxunion(roughBBox(p),bbox)
 
-#         if  node.tag == inkex.addNS('use','svg') or node.tag=='use':
-#             refid=node.get(inkex.addNS('href','xlink'))
-#             path = '//*[@id="%s"]' % refid[1:]
-#             refnode = node.getroottree().xpath(path, namespaces=inkex.NSS)
-#             bbox=boxunion(computeBBox(refnode,m),bbox)
+        if  node.tag == inkex.addNS('use','svg') or node.tag=='use':
+            refid=node.get(inkex.addNS('href','xlink'))
+            path = '//*[@id="%s"]' % refid[1:]
+            refnode = node.getroottree().xpath(path, namespaces=inkex.NSS)
+            bbox=boxunion(computeBBox(refnode,m),bbox)
             
-#         bbox=boxunion(computeBBox(node,m),bbox)
-#     return bbox
+        bbox=boxunion(computeBBox(node,m),bbox)
+    return bbox
 
 
