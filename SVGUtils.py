@@ -16,11 +16,14 @@ def stripStyleByClass(root, c, styleAttr):
             del i.attrib[styleAttr]
         s = i.get("style")
         if s is not None:
+#            print s
             s = re.sub(styleAttr+"\s*:\s*[^;]*;?","",s)
+ #           print s
             if s == "":
                 del i.attrib["style"]
             else:
                 i.set("style", s)
+  #      ET.dump(i)
 
 def appendSVGStyleSheet(root,c,text) :
     p = ".//svg:style[@class='" + c + "']"
