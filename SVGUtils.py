@@ -63,11 +63,10 @@ def scrubGradients(root):
                     
         if e.get("style") is not None:
             s = e.get("style")
-            if re.search("radient", s) is not None:
-                for g in inuse:
-                    if re.search(g,s):
-                        inuse[g] = True
-
+            for g in inuse:
+                if re.search(g,s):
+                    inuse[g] = True
+                    
     for e in root.xpath("//svg:linearGradient",namespaces=InkscapeNS.namespaces):
         if not inuse[e.get("id")]:
             e.getparent().remove(e)
@@ -81,26 +80,16 @@ def uniquifyGradients(root,prefix):
     gradients = {}
 
     def replace(x):
-        if re.search("radient", x) is not None:
-            #print x
-            for g in gradients:
-                x = re.sub("#"+g,"#"+gradients[g], x)
-            #print x
+        for g in gradients:
+            x = x.replace('#'+g, '#'+gradients[g])
         return x
 
-    for e in root.xpath("//svg:linearGradient",namespaces=InkscapeNS.namespaces):
+    for e in root.xpath(".//svg:linearGradient",namespaces=InkscapeNS.namespaces) + root.xpath(".//svg:radialGradient",namespaces=InkscapeNS.namespaces):
         gradients[e.get("id")] = prefix+e.get("id")
         e.set("id",prefix+e.get("id"))
 
-        l = e.get("{http://www.w3.org/1999/xlink}href")
-        if l is not None:
-            l = replace(l)
-            e.set("{http://www.w3.org/1999/xlink}href",l)
 
-    for e in root.xpath("//svg:radialGradient",namespaces=InkscapeNS.namespaces):
-        gradients[e.get("id")] = prefix+e.get("id")
-        e.set("id",prefix+e.get("id"))
-
+    for e in root.xpath(".//svg:linearGradient",namespaces=InkscapeNS.namespaces) + root.xpath(".//svg:radialGradient",namespaces=InkscapeNS.namespaces):
         l = e.get("{http://www.w3.org/1999/xlink}href")
         if l is not None:
             l = replace(l)
