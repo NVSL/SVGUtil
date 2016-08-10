@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import argparse
-from lxml import etree as ET
-import XMLUtil
-import InkscapeNS
-import sys
 import re
+
+import XMLUtil
+from lxml import etree as ET
+
+import InkscapeNS
 
 parser = argparse.ArgumentParser(description="Tool for extracting component positioning information from an svg file.")
 
