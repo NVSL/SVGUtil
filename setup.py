@@ -15,7 +15,5 @@ setup(name="SVGUtil",
       version=version,
       long_description=long_description,
       author="NVSL, University of California San Diego",
-      packages = ["SVGUtil"],
-      package_dir = {"SVGUtil": "."}
-      #find_packages()
+      packages = find_packages()
 )
